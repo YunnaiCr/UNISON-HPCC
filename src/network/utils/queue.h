@@ -377,6 +377,20 @@ class Queue : public QueueBase
     /** @copydoc ns3::Object::DoDispose */
     void DoDispose() override;
 
+    //Note: We move these lines of code to the protected section to make them accessible to subclasses.
+    /// Traced callback: fired when a packet is enqueued
+    TracedCallback<Ptr<const Item>> m_traceEnqueue;
+    /// Traced callback: fired when a packet is dequeued
+    TracedCallback<Ptr<const Item>> m_traceDequeue;
+    /// Traced callback: fired when a packet is dropped
+    TracedCallback<Ptr<const Item>> m_traceDrop;
+    /// Traced callback: fired when a packet is dropped before enqueue
+    TracedCallback<Ptr<const Item>> m_traceDropBeforeEnqueue;
+    /// Traced callback: fired when a packet is dropped after dequeue
+    TracedCallback<Ptr<const Item>> m_traceDropAfterDequeue;
+
+    NS_LOG_TEMPLATE_DECLARE; //!< the log component
+
   private:
     /**
      * Struct providing a static method returning the object stored within the queue
@@ -421,18 +435,6 @@ class Queue : public QueueBase
     };
 
     Container m_packets;     //!< the items in the queue
-    NS_LOG_TEMPLATE_DECLARE; //!< the log component
-
-    /// Traced callback: fired when a packet is enqueued
-    TracedCallback<Ptr<const Item>> m_traceEnqueue;
-    /// Traced callback: fired when a packet is dequeued
-    TracedCallback<Ptr<const Item>> m_traceDequeue;
-    /// Traced callback: fired when a packet is dropped
-    TracedCallback<Ptr<const Item>> m_traceDrop;
-    /// Traced callback: fired when a packet is dropped before enqueue
-    TracedCallback<Ptr<const Item>> m_traceDropBeforeEnqueue;
-    /// Traced callback: fired when a packet is dropped after dequeue
-    TracedCallback<Ptr<const Item>> m_traceDropAfterDequeue;
 };
 
 /**
