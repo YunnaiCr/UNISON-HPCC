@@ -15,6 +15,8 @@ if(${ENABLE_MPI})
   )
 endif()
 
+add_compile_options(-Wno-pedantic)
+
 build_lib(
   LIBNAME point-to-point
   SOURCE_FILES
@@ -23,12 +25,20 @@ build_lib(
     model/point-to-point-channel.cc
     model/point-to-point-net-device.cc
     model/ppp-header.cc
+    model/cn-header.cc
+    model/pause-header.cc
+    model/pint.cc
+    model/qbb-header.cc
   HEADER_FILES
     ${mpi_headers}
     helper/point-to-point-helper.h
     model/point-to-point-channel.h
     model/point-to-point-net-device.h
     model/ppp-header.h
+    model/cn-header.h
+    model/pause-header.h
+    model/pint.h
+    model/qbb-header.h
   LIBRARIES_TO_LINK ${libnetwork}
                     ${mpi_libraries}
   TEST_SOURCES test/point-to-point-test.cc

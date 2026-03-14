@@ -1,3 +1,5 @@
+add_compile_options(-Wno-pedantic)
+
 set(source_files
     helper/application-container.cc
     helper/application-helper.cc
@@ -71,6 +73,7 @@ set(source_files
     utils/sll-header.cc
     utils/timestamp-tag.cc
     utils/broadcom-egress-queue.cc
+    utils/int-header.cc
 )
 
 set(header_files
@@ -152,6 +155,7 @@ set(header_files
     utils/sll-header.h
     utils/timestamp-tag.h
     utils/broadcom-egress-queue.h
+    utils/int-header.h
 )
 
 build_lib(
