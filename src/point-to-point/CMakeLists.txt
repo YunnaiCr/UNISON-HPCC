@@ -29,6 +29,8 @@ build_lib(
     model/pause-header.cc
     model/pint.cc
     model/qbb-header.cc
+    model/switch-mmu.cc
+    model/rdma-queue-pair.cc
   HEADER_FILES
     ${mpi_headers}
     helper/point-to-point-helper.h
@@ -39,6 +41,8 @@ build_lib(
     model/pause-header.h
     model/pint.h
     model/qbb-header.h
+    model/switch-mmu.h
+    model/rdma-queue-pair.h
   LIBRARIES_TO_LINK ${libnetwork}
                     ${mpi_libraries}
   TEST_SOURCES test/point-to-point-test.cc

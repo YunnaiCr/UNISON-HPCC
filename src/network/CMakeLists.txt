@@ -74,6 +74,7 @@ set(source_files
     utils/timestamp-tag.cc
     utils/broadcom-egress-queue.cc
     utils/int-header.cc
+    utils/custom-header.cc
 )
 
 set(header_files
@@ -156,6 +157,7 @@ set(header_files
     utils/timestamp-tag.h
     utils/broadcom-egress-queue.h
     utils/int-header.h
+    utils/custom-header.h
 )
 
 build_lib(

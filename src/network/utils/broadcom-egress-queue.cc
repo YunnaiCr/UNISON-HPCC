@@ -17,7 +17,7 @@ namespace ns3 {
 	TypeId BEgressQueue::GetTypeId(void)
 	{
 		static TypeId tid = TypeId("ns3::BEgressQueue")
-			.SetParent<Queue>()
+			.SetParent<Queue<Packet>>()
 			.AddConstructor<BEgressQueue>()
 			.AddAttribute("MaxBytes",
 				"The maximum number of bytes accepted by this BEgressQueue.",
