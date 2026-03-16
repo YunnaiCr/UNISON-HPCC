@@ -41,7 +41,7 @@ public:
 	static uint32_t ack_q_idx;
 	int m_qlast;
 	uint32_t m_rrlast;
-	Ptr<DropTailQueue> m_ackQ; // highest priority queue
+	Ptr<DropTailQueue<Packet> > m_ackQ; // highest priority queue
 	Ptr<RdmaQueuePairGroup> m_qpGrp; // queue pairs
 
 	// callback for get next packet
@@ -76,7 +76,7 @@ public:
   static TypeId GetTypeId (void);
 
   QbbNetDevice ();
-  virtual ~QbbNetDevice ();
+  ~QbbNetDevice () override;
 
   /**
    * Receive a packet from a connected PointToPointChannel.
@@ -98,7 +98,7 @@ public:
    * @param dest Unused
    * @param protocolNumber Protocol used in packet
    */
-  virtual bool Send(Ptr<Packet> packet, const Address &dest, uint16_t protocolNumber);
+  bool Send(Ptr<Packet> packet, const Address &dest, uint16_t protocolNumber) override;
   virtual bool SwitchSend (uint32_t qIndex, Ptr<Packet> packet, CustomHeader &ch);
 
   /**
@@ -116,14 +116,15 @@ public:
 
   bool Attach (Ptr<QbbChannel> ch);
 
-   virtual Ptr<Channel> GetChannel (void) const;
+  Ptr<Channel> GetChannel (void) const override;
 
-   void SetQueue (Ptr<BEgressQueue> q);
-   Ptr<BEgressQueue> GetQueue ();
-   virtual bool IsQbb(void) const;
-   void NewQp(Ptr<RdmaQueuePair> qp);
-   void ReassignedQp(Ptr<RdmaQueuePair> qp);
-   void TriggerTransmit(void);
+  void SetQueue (Ptr<BEgressQueue> q);
+  Ptr<BEgressQueue> GetQueue ();
+  
+  virtual bool IsQbb(void) const;
+  void NewQp(Ptr<RdmaQueuePair> qp);
+  void ReassignedQp(Ptr<RdmaQueuePair> qp);
+  void TriggerTransmit(void);
 
 	void SendPfc(uint32_t qIndex, uint32_t type); // type: 0 = pause, 1 = resume
 
@@ -135,9 +136,9 @@ protected:
 
 	//Ptr<Node> m_node;
 
-  bool TransmitStart (Ptr<Packet> p);
+  bool TransmitStart (Ptr<Packet> p) override;
   
-  virtual void DoDispose(void);
+  void DoDispose(void) override;
 
   /// Reset the channel into READY state and try transmit again
   virtual void TransmitComplete(void);

@@ -14,6 +14,7 @@
 #include "ns3/callback.h"
 #include "ns3/object.h"
 #include "ns3/ptr.h"
+#include "ns3/custom-header.h"
 
 #include <vector>
 
@@ -24,6 +25,7 @@ class Application;
 class Packet;
 class Address;
 class Time;
+class CustomHeader;
 
 /**
  * @ingroup network
@@ -209,6 +211,33 @@ class Node : public Object
      */
     static bool ChecksumEnabled();
 
+    // HPCC Extension
+    /**
+     * @brief Get the type of this node.
+     * @returns 0 for NIC (host), 1 for Switch
+     */
+    uint32_t GetNodeType() const;
+
+    /**
+     * @brief Switch receives a packet from a device.
+     * @param device the net device that received the packet
+     * @param packet the packet received
+     * @param ch the custom header parsed from the packet
+     * @returns true if the packet was handled
+     */
+    virtual bool SwitchReceiveFromDevice(Ptr<NetDevice> device, 
+                                         Ptr<Packet> packet, 
+                                         CustomHeader &ch);
+
+    /**
+     * @brief Notify the switch that a packet is dequeued.
+     * @param ifIndex the interface index
+     * @param qIndex the queue index
+     * @param p the packet being dequeued
+     */
+    virtual void SwitchNotifyDequeue(uint32_t ifIndex, 
+                                     uint32_t qIndex, 
+                                     Ptr<Packet> p);
   protected:
     /**
      * The dispose method. Subclasses must override this method
@@ -300,7 +329,10 @@ class Node : public Object
     std::vector<Ptr<Application>> m_applications;         //!< Applications associated to this node
     ProtocolHandlerList m_handlers;                       //!< Protocol handlers in the node
     DeviceAdditionListenerList m_deviceAdditionListeners; //!< Device addition listeners in the node
-};
+
+    // HPCC Extension
+    uint32_t m_node_type;                                 //!< Type of this node
+  };
 
 } // namespace ns3
 

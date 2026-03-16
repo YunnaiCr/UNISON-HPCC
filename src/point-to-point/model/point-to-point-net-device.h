@@ -195,7 +195,6 @@ class PointToPointNetDevice : public NetDevice
      */
     void DoMpiReceive(Ptr<Packet> p);
 
-  private:
     /**
      * @brief Dispose of the object
      */
@@ -240,7 +239,7 @@ class PointToPointNetDevice : public NetDevice
      * @param p a reference to the packet to send
      * @returns true if success, false on failure
      */
-    bool TransmitStart(Ptr<Packet> p);
+    virtual bool TransmitStart(Ptr<Packet> p);
 
     /**
      * Stop Sending a Packet Down the Wire and Begin the Interframe Gap.
@@ -433,6 +432,7 @@ class PointToPointNetDevice : public NetDevice
 
     Ptr<Packet> m_currentPkt; //!< Current packet processed
 
+  private:
     /**
      * @brief PPP to Ethernet protocol number mapping
      * @param protocol A PPP protocol number

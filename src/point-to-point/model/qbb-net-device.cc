@@ -59,10 +59,12 @@ namespace ns3 {
 	{
 		static TypeId tid = TypeId ("ns3::RdmaEgressQueue")
 			.SetParent<Object> ()
-			.AddTraceSource ("RdmaEnqueue", "Enqueue a packet in the RdmaEgressQueue.",
-					MakeTraceSourceAccessor (&RdmaEgressQueue::m_traceRdmaEnqueue))
-			.AddTraceSource ("RdmaDequeue", "Dequeue a packet in the RdmaEgressQueue.",
-					MakeTraceSourceAccessor (&RdmaEgressQueue::m_traceRdmaDequeue))
+		.AddTraceSource ("RdmaEnqueue", "Enqueue a packet in the RdmaEgressQueue.",
+				MakeTraceSourceAccessor (&RdmaEgressQueue::m_traceRdmaEnqueue),
+				"ns3::TracedCallback<ns3::Ptr<const ns3::Packet>, unsigned int>")
+		.AddTraceSource ("RdmaDequeue", "Dequeue a packet in the RdmaEgressQueue.",
+				MakeTraceSourceAccessor (&RdmaEgressQueue::m_traceRdmaDequeue),
+				"ns3::TracedCallback<ns3::Ptr<const ns3::Packet>, unsigned int>")
 			;
 		return tid;
 	}
@@ -70,7 +72,7 @@ namespace ns3 {
 	RdmaEgressQueue::RdmaEgressQueue(){
 		m_rrlast = 0;
 		m_qlast = 0;
-		m_ackQ = CreateObject<DropTailQueue>();
+		m_ackQ = CreateObject<DropTailQueue<Packet> >();
 		m_ackQ->SetAttribute("MaxBytes", UintegerValue(0xffffffff)); // queue limit is on a higher level, not here
 	}
 
@@ -197,22 +199,27 @@ namespace ns3 {
 					"A queue to use as the transmit queue in the device.",
 					PointerValue (),
 					MakePointerAccessor (&QbbNetDevice::m_queue),
-					MakePointerChecker<Queue> ())
+					MakePointerChecker<Queue<Packet>> ())
 			.AddAttribute ("RdmaEgressQueue", 
 					"A queue to use as the transmit queue in the device.",
 					PointerValue (),
 					MakePointerAccessor (&QbbNetDevice::m_rdmaEQ),
 					MakePointerChecker<Object> ())
-			.AddTraceSource ("QbbEnqueue", "Enqueue a packet in the QbbNetDevice.",
-					MakeTraceSourceAccessor (&QbbNetDevice::m_traceEnqueue))
-			.AddTraceSource ("QbbDequeue", "Dequeue a packet in the QbbNetDevice.",
-					MakeTraceSourceAccessor (&QbbNetDevice::m_traceDequeue))
-			.AddTraceSource ("QbbDrop", "Drop a packet in the QbbNetDevice.",
-					MakeTraceSourceAccessor (&QbbNetDevice::m_traceDrop))
-			.AddTraceSource ("RdmaQpDequeue", "A qp dequeue a packet.",
-					MakeTraceSourceAccessor (&QbbNetDevice::m_traceQpDequeue))
-			.AddTraceSource ("QbbPfc", "get a PFC packet. 0: resume, 1: pause",
-					MakeTraceSourceAccessor (&QbbNetDevice::m_tracePfc))
+		.AddTraceSource ("QbbEnqueue", "Enqueue a packet in the QbbNetDevice.",
+				MakeTraceSourceAccessor (&QbbNetDevice::m_traceEnqueue),
+				"ns3::TracedCallback<ns3::Ptr<const ns3::Packet>, unsigned int>")
+		.AddTraceSource ("QbbDequeue", "Dequeue a packet in the QbbNetDevice.",
+				MakeTraceSourceAccessor (&QbbNetDevice::m_traceDequeue),
+				"ns3::TracedCallback<ns3::Ptr<const ns3::Packet>, unsigned int>")
+		.AddTraceSource ("QbbDrop", "Drop a packet in the QbbNetDevice.",
+				MakeTraceSourceAccessor (&QbbNetDevice::m_traceDrop),
+				"ns3::TracedCallback<ns3::Ptr<const ns3::Packet>, unsigned int>")
+		.AddTraceSource ("RdmaQpDequeue", "A qp dequeue a packet.",
+				MakeTraceSourceAccessor (&QbbNetDevice::m_traceQpDequeue),
+				"ns3::TracedCallback<ns3::Ptr<const ns3::Packet>, ns3::Ptr<ns3::RdmaQueuePair>>")
+		.AddTraceSource ("QbbPfc", "get a PFC packet. 0: resume, 1: pause",
+				MakeTraceSourceAccessor (&QbbNetDevice::m_tracePfc),
+				"ns3::TracedCallback<unsigned int>")
 			;
 
 		return tid;
@@ -248,9 +255,9 @@ namespace ns3 {
 		NS_LOG_FUNCTION(this);
 		NS_ASSERT_MSG(m_txMachineState == BUSY, "Must be BUSY if transmitting");
 		m_txMachineState = READY;
-		NS_ASSERT_MSG(m_currentPkt != 0, "QbbNetDevice::TransmitComplete(): m_currentPkt zero");
+		NS_ASSERT_MSG(m_currentPkt != nullptr, "QbbNetDevice::TransmitComplete(): m_currentPkt zero");
 		m_phyTxEndTrace(m_currentPkt);
-		m_currentPkt = 0;
+		m_currentPkt = nullptr;
 		DequeueAndTransmit();
 	}
 
@@ -296,7 +303,7 @@ namespace ns3 {
 			return;
 		}else{   //switch, doesn't care about qcn, just send
 			p = m_queue->DequeueRR(m_paused);		//this is round-robin
-			if (p != 0){
+			if (p != nullptr){
 				m_snifferTrace(p);
 				m_promiscSnifferTrace(p);
 				Ipv4Header h;
@@ -341,7 +348,7 @@ namespace ns3 {
 		NS_LOG_FUNCTION(this << qIndex);
 		NS_ASSERT_MSG(m_paused[qIndex], "Must be PAUSEd");
 		m_paused[qIndex] = false;
-		NS_LOG_INFO("Node " << m_node->GetId() << " dev " << m_ifIndex << " queue " << qIndex <<
+		NS_LOG_INFO("Node " << GetNode()->GetId() << " dev " << GetIfIndex() << " queue " << qIndex <<
 			" resumed at " << Simulator::Now().GetSeconds());
 		DequeueAndTransmit();
 	}
@@ -416,7 +423,10 @@ namespace ns3 {
 		ipv4h.SetDestination(Ipv4Address("255.255.255.255"));
 		ipv4h.SetPayloadSize(p->GetSize());
 		ipv4h.SetTtl(1);
-		ipv4h.SetIdentification(UniformVariable(0, 65536).GetValue());
+		Ptr<UniformRandomVariable> uv = CreateObject<UniformRandomVariable>();
+		uv->SetAttribute("Min", DoubleValue(0));
+		uv->SetAttribute("Max", DoubleValue(65536));
+		ipv4h.SetIdentification(uv->GetValue());
 		p->AddHeader(ipv4h);
 		AddHeader(p, 0x800);
 		CustomHeader ch(CustomHeader::L2_Header | CustomHeader::L3_Header | CustomHeader::L4_Header);
@@ -448,7 +458,7 @@ namespace ns3 {
 		m_txMachineState = BUSY;
 		m_currentPkt = p;
 		m_phyTxBeginTrace(m_currentPkt);
-		Time txTime = Seconds(m_bps.CalculateTxTime(p->GetSize()));
+		Time txTime = m_bps.CalculateBytesTxTime(p->GetSize());
 		Time txCompleteTime = txTime + m_tInterframeGap;
 		NS_LOG_LOGIC("Schedule TransmitCompleteEvent in " << txCompleteTime.GetSeconds() << "sec");
 		Simulator::Schedule(txCompleteTime, &QbbNetDevice::TransmitComplete, this);
@@ -513,7 +523,7 @@ namespace ns3 {
 				m_paused[i] = false;
 			while (1){
 				Ptr<Packet> p = m_queue->DequeueRR(m_paused);
-				if (p == 0)
+				if (p == nullptr)
 					 break;
 				m_traceDrop(p, m_queue->GetLastQueue());
 			}
@@ -523,7 +533,7 @@ namespace ns3 {
 	}
 
 	void QbbNetDevice::UpdateNextAvail(Time t){
-		if (!m_nextSend.IsExpired() && t < m_nextSend.GetTs()){
+		if (!m_nextSend.IsExpired() && t < Time(m_nextSend.GetTs())){
 			Simulator::Cancel(m_nextSend);
 			Time delta = t < Simulator::Now() ? Time(0) : t - Simulator::Now();
 			m_nextSend = Simulator::Schedule(delta, &QbbNetDevice::DequeueAndTransmit, this);

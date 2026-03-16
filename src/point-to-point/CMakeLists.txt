@@ -31,6 +31,9 @@ build_lib(
     model/qbb-header.cc
     model/switch-mmu.cc
     model/rdma-queue-pair.cc
+    model/qbb-channel.cc
+    model/qbb-net-device.cc
+    model/qbb-remote-channel.cc
   HEADER_FILES
     ${mpi_headers}
     helper/point-to-point-helper.h
@@ -43,6 +46,9 @@ build_lib(
     model/qbb-header.h
     model/switch-mmu.h
     model/rdma-queue-pair.h
+    model/qbb-channel.h
+    model/qbb-net-device.h
+    model/qbb-remote-channel.h
   LIBRARIES_TO_LINK ${libnetwork}
                     ${mpi_libraries}
   TEST_SOURCES test/point-to-point-test.cc

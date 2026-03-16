@@ -21,7 +21,6 @@
 
 #include <list>
 #include "ns3/channel.h"
-#include "ns3/point-to-point-channel.h"
 #include "ns3/ptr.h"
 #include "ns3/nstime.h"
 #include "ns3/data-rate.h"
@@ -45,7 +44,7 @@ class Packet;
  * [0] wire to transmit on.  The second device gets the [1] wire.  There is a
  * state (IDLE, TRANSMITTING) associated with each wire.
  */
-class QbbChannel : public PointToPointChannel 
+class QbbChannel : public Channel 
 {
 public:
   static TypeId GetTypeId (void);
@@ -77,21 +76,21 @@ public:
    * \brief Get number of devices on this channel
    * \returns number of devices on this channel
    */
-  virtual uint32_t GetNDevices (void) const;
+  std::size_t GetNDevices (void) const override;
 
   /*
    * \brief Get QbbNetDevice corresponding to index i on this channel
    * \param i Index number of the device requested
    * \returns Ptr to QbbNetDevice requested
    */
-  Ptr<QbbNetDevice> GetQbbDevice (uint32_t i) const;
+  Ptr<QbbNetDevice> GetQbbDevice (std::size_t i) const;
 
   /*
    * \brief Get NetDevice corresponding to index i on this channel
    * \param i Index number of the device requested
    * \returns Ptr to NetDevice requested
    */
-  virtual Ptr<NetDevice> GetDevice (uint32_t i) const;
+  Ptr<NetDevice> GetDevice (std::size_t i) const override;
 
   /*
    * \brief Get the delay associated with this channel
@@ -124,10 +123,10 @@ protected:
 
 private:
   // Each point to point link has exactly two net devices
-  static const std::size_t N_DEVICES = 2;
+  static const int N_DEVICES = 2;
 
   Time          m_delay;
-  std::size_t   m_nDevices;
+  int32_t       m_nDevices;
 
   /**
    * The trace source for the packet transmission animation events that the 

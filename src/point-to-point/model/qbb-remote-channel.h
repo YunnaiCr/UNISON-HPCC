@@ -38,7 +38,7 @@ public:
   static TypeId GetTypeId (void);
   QbbRemoteChannel ();
   ~QbbRemoteChannel ();
-  virtual bool TransmitStart (Ptr<Packet> p, Ptr<QbbNetDevice> src, Time txTime);
+  bool TransmitStart (Ptr<Packet> p, Ptr<QbbNetDevice> src, Time txTime) override;
 };
 }
 

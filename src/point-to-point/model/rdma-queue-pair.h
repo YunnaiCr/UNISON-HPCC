@@ -7,6 +7,7 @@
 #include <ns3/data-rate.h>
 #include <ns3/event-id.h>
 #include <ns3/int-header.h>
+#include <ns3/custom-header.h>
 #include <vector>
 
 namespace ns3 {

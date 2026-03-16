@@ -43,7 +43,8 @@ QbbChannel::GetTypeId (void)
                    MakeTimeChecker ())
     .AddTraceSource ("TxRxQbb",
                      "Trace source indicating transmission of packet from the QbbChannel, used by the Animation interface.",
-                     MakeTraceSourceAccessor (&QbbChannel::m_txrxQbb))
+                     MakeTraceSourceAccessor (&QbbChannel::m_txrxQbb),
+                     "ns3::PointToPointChannel::TxRxAnimationCallback")
   ;
   return tid;
 }
@@ -53,7 +54,7 @@ QbbChannel::GetTypeId (void)
 // has an "infitely" fast transmission speed and zero delay.
 QbbChannel::QbbChannel()
   :
-    PointToPointChannel ()
+    Channel ()
 {
   NS_LOG_FUNCTION_NOARGS ();
   m_nDevices = 0;
@@ -67,7 +68,7 @@ QbbChannel::Attach (Ptr<QbbNetDevice> device)
   //fflush(stdout);
   NS_LOG_FUNCTION (this << device);
   NS_ASSERT_MSG (m_nDevices < N_DEVICES, "Only two devices permitted");
-  NS_ASSERT (device != 0);
+  NS_ASSERT (device != nullptr);
 
   m_link[m_nDevices++].m_src = device;
 //
@@ -108,20 +109,19 @@ QbbChannel::TransmitStart (
   return true;
 }
 
-uint32_t 
+std::size_t 
 QbbChannel::GetNDevices (void) const
 {
   NS_LOG_FUNCTION_NOARGS ();
 
   //std::cout<<m_nDevices<<"\n";
   //std::cout.flush();
-
-
+  
   return m_nDevices;
 }
 
 Ptr<QbbNetDevice>
-QbbChannel::GetQbbDevice (uint32_t i) const
+QbbChannel::GetQbbDevice (std::size_t i) const
 {
   NS_LOG_FUNCTION_NOARGS ();
   NS_ASSERT (i < 2);
@@ -129,7 +129,7 @@ QbbChannel::GetQbbDevice (uint32_t i) const
 }
 
 Ptr<NetDevice>
-QbbChannel::GetDevice (uint32_t i) const
+QbbChannel::GetDevice (std::size_t i) const
 {
   NS_LOG_FUNCTION_NOARGS ();
   return GetQbbDevice (i);

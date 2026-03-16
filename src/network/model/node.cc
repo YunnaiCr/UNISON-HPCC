@@ -70,13 +70,19 @@ Node::GetTypeId()
                 TypeId::ATTR_GET | TypeId::ATTR_SET,
                 UintegerValue(0),
                 MakeUintegerAccessor(&Node::m_sid),
-                MakeUintegerChecker<uint32_t>());
+                MakeUintegerChecker<uint32_t>())
+            .AddAttribute("NodeType",
+                          "The type of this node (0=NIC, 1=Switch)",
+                          UintegerValue(0),
+                          MakeUintegerAccessor(&Node::m_node_type),
+                          MakeUintegerChecker<uint32_t>());
     return tid;
 }
 
 Node::Node()
     : m_id(0),
-      m_sid(0)
+      m_sid(0),
+      m_node_type(0)
 {
     NS_LOG_FUNCTION(this);
     Construct();
@@ -84,7 +90,8 @@ Node::Node()
 
 Node::Node(uint32_t sid)
     : m_id(0),
-      m_sid(sid)
+      m_sid(sid),
+      m_node_type(0)
 {
     NS_LOG_FUNCTION(this << sid);
     Construct();
@@ -377,6 +384,38 @@ Node::NotifyDeviceAdded(Ptr<NetDevice> device)
     {
         (*i)(device);
     }
+}
+
+// HPCC Extension implementations
+
+uint32_t
+Node::GetNodeType() const
+{
+    NS_LOG_FUNCTION(this);
+    return m_node_type;
+}
+
+bool
+Node::SwitchReceiveFromDevice(Ptr<NetDevice> device, 
+                              Ptr<Packet> packet, 
+                              CustomHeader &ch)
+{
+    NS_LOG_FUNCTION(this << device << packet);
+    NS_ASSERT_MSG(false, 
+        "Calling SwitchReceiveFromDevice() on a non-switch node "
+        "or this function is not implemented");
+    return false;
+}
+
+void
+Node::SwitchNotifyDequeue(uint32_t ifIndex, 
+                          uint32_t qIndex, 
+                          Ptr<Packet> p)
+{
+    NS_LOG_FUNCTION(this << ifIndex << qIndex << p);
+    NS_ASSERT_MSG(false, 
+        "Calling SwitchNotifyDequeue() on a non-switch node "
+        "or this function is not implemented");
 }
 
 } // namespace ns3
