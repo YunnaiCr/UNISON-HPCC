@@ -176,6 +176,33 @@ class DataRate
     DataRate& operator*=(uint64_t rhs);
 
     /**
+     * @brief Divides the DataRate by a double
+     *
+     * @return DataRate object representing this object divided by rhs
+     *
+     * @param rhs the double to divide this datarate by
+     */
+    DataRate operator/(double rhs) const;
+
+    /**
+     * @brief Divides the DataRate by an integer
+     *
+     * @return DataRate object representing this object divided by rhs
+     *
+     * @param rhs the int to divide this datarate by
+     */
+    DataRate operator/(int rhs) const;
+
+    /**
+     * @brief Divides the DataRate by a uint64_t
+     *
+     * @return DataRate object representing this object divided by rhs
+     *
+     * @param rhs the uint64_t to divide this datarate by
+     */
+    DataRate operator/(uint64_t rhs) const;
+
+    /**
      * @return true if this rate is less than rhs
      *
      * @param rhs the datarate to compare to this datarate

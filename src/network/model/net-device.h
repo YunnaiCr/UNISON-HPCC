@@ -17,6 +17,7 @@
 #include "ns3/ipv6-address.h"
 #include "ns3/object.h"
 #include "ns3/ptr.h"
+#include "ns3/custom-header.h"
 
 #include <stdint.h>
 
@@ -223,6 +224,9 @@ class NetDevice : public Object
      * @return value of m_isPointToPoint flag
      */
     virtual bool IsPointToPoint() const = 0;
+
+    virtual bool IsQbb(void) const;
+
     /**
      * @param packet packet sent from above down to Network Device
      * @param dest mac address of the destination (already resolved)
@@ -356,6 +360,8 @@ class NetDevice : public Object
      * @return true if this interface supports a bridging mode, false otherwise.
      */
     virtual bool SupportsSendFrom() const = 0;
+
+    virtual bool SwitchSend (uint32_t qIndex, Ptr<Packet> packet, CustomHeader &ch);
 };
 
 } // namespace ns3

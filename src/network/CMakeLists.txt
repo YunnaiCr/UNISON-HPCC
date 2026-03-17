@@ -1,5 +1,3 @@
-add_compile_options(-Wno-pedantic)
-
 set(source_files
     helper/application-container.cc
     helper/application-helper.cc

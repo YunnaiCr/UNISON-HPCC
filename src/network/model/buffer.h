@@ -608,6 +608,9 @@ class Buffer
      * @brief Copy constructor
      * @param o the buffer to copy
      */
+
+    uint8_t* GetBuffer() const;
+    
     inline Buffer(const Buffer& o);
     /**
      * @brief Assignment operator

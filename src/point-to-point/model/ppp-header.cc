@@ -69,6 +69,10 @@ PppHeader::GetSerializedSize() const
     return 2;
 }
 
+uint32_t PppHeader::GetStaticSize (void){
+	return 14;
+}
+
 void
 PppHeader::Serialize(Buffer::Iterator start) const
 {

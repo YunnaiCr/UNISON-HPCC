@@ -8,6 +8,9 @@ cmake_minimum_required(VERSION 3.20..3.20)
 # ##############################################################################
 project(NS3 CXX)
 
+# Disable pedantic warnings globally for anonymous structs
+add_compile_options(-Wno-pedantic)
+
 file(STRINGS VERSION NS3_VER)
 
 # minimum compiler versions

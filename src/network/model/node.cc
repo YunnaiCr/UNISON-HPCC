@@ -174,6 +174,14 @@ Node::AddApplication(Ptr<Application> application)
     return index;
 }
 
+void Node::DeleteApplication (Ptr<Application> application){
+	for (auto it = m_applications.begin(); it != m_applications.end(); it++)
+		if (*it == application){
+			m_applications.erase(it);
+			break;
+		}
+}
+
 Ptr<Application>
 Node::GetApplication(uint32_t index) const
 {

@@ -12,6 +12,7 @@
 #include "ns3/header.h"
 #include "ns3/log.h"
 #include "ns3/simulator.h"
+#include "ns3/int-header.h"
 
 namespace ns3
 {
@@ -25,6 +26,8 @@ SeqTsHeader::SeqTsHeader()
       m_ts(Simulator::Now().GetTimeStep())
 {
     NS_LOG_FUNCTION(this);
+    if (IntHeader::mode == 1)
+    ih.ts = Simulator::Now().GetTimeStep();
 }
 
 void
@@ -41,10 +44,23 @@ SeqTsHeader::GetSeq() const
     return m_seq;
 }
 
+void
+SeqTsHeader::SetPG (uint16_t pg)
+{
+	m_pg = pg;
+}
+uint16_t
+SeqTsHeader::GetPG (void) const
+{
+	return m_pg;
+}
+
 Time
 SeqTsHeader::GetTs() const
 {
     NS_LOG_FUNCTION(this);
+    if (IntHeader::mode == 1)
+        return TimeStep(ih.ts);
     return TimeStep(m_ts);
 }
 
@@ -85,6 +101,8 @@ SeqTsHeader::Serialize(Buffer::Iterator start) const
     Buffer::Iterator i = start;
     i.WriteHtonU32(m_seq);
     i.WriteHtonU64(m_ts);
+
+    ih.Serialize(i);
 }
 
 uint32_t
@@ -94,6 +112,7 @@ SeqTsHeader::Deserialize(Buffer::Iterator start)
     Buffer::Iterator i = start;
     m_seq = i.ReadNtohU32();
     m_ts = i.ReadNtohU64();
+    ih.Deserialize(i);
     return GetSerializedSize();
 }
 

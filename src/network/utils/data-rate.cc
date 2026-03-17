@@ -180,6 +180,24 @@ DataRate::operator*=(uint64_t rhs)
     return *this;
 }
 
+DataRate
+DataRate::operator/(double rhs) const
+{
+    return DataRate((uint64_t)(m_bps / rhs));
+}
+
+DataRate
+DataRate::operator/(int rhs) const
+{
+    return DataRate(m_bps / (uint64_t)rhs);
+}
+
+DataRate
+DataRate::operator/(uint64_t rhs) const
+{
+    return DataRate(m_bps / rhs);
+}
+
 bool
 DataRate::operator<(const DataRate& rhs) const
 {

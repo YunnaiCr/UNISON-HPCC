@@ -8,7 +8,7 @@
  */
 #include "udp-trace-client.h"
 
-#include "seq-ts-header.h"
+#include "ns3/seq-ts-header.h"
 
 #include "ns3/address-utils.h"
 #include "ns3/boolean.h"

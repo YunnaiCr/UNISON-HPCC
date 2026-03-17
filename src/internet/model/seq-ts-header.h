@@ -11,6 +11,7 @@
 
 #include "ns3/header.h"
 #include "ns3/nstime.h"
+#include "ns3/int-header.h"
 
 namespace ns3
 {
@@ -52,6 +53,12 @@ class SeqTsHeader : public Header
      * @brief Get the type ID.
      * @return the object TypeId
      */
+
+    void SetPG (uint16_t pg);
+    uint16_t GetPG () const;
+    
+    IntHeader ih;
+
     static TypeId GetTypeId();
 
     TypeId GetInstanceTypeId() const override;
@@ -63,6 +70,7 @@ class SeqTsHeader : public Header
   private:
     uint32_t m_seq; //!< Sequence number
     uint64_t m_ts;  //!< Timestamp
+    uint16_t m_pg;
 };
 
 } // namespace ns3

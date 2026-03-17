@@ -13,7 +13,6 @@ build_lib(
     model/packet-loss-counter.cc
     model/packet-sink.cc
     model/seq-ts-echo-header.cc
-    model/seq-ts-header.cc
     model/seq-ts-size-header.cc
     model/sink-application.cc
     model/source-application.cc
@@ -26,6 +25,7 @@ build_lib(
     model/udp-echo-server.cc
     model/udp-server.cc
     model/udp-trace-client.cc
+    model/rdma-client.cc
   HEADER_FILES
     helper/bulk-send-helper.h
     helper/on-off-helper.h
@@ -39,7 +39,6 @@ build_lib(
     model/packet-loss-counter.h
     model/packet-sink.h
     model/seq-ts-echo-header.h
-    model/seq-ts-header.h
     model/seq-ts-size-header.h
     model/sink-application.h
     model/source-application.h
@@ -52,7 +51,9 @@ build_lib(
     model/udp-echo-server.h
     model/udp-server.h
     model/udp-trace-client.h
+    model/rdma-client.h
   LIBRARIES_TO_LINK ${libinternet}
+                    ${libpoint-to-point}
   TEST_SOURCES
     test/three-gpp-http-client-server-test.cc
     test/bulk-send-application-test-suite.cc

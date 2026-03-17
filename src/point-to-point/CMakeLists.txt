@@ -15,8 +15,6 @@ if(${ENABLE_MPI})
   )
 endif()
 
-add_compile_options(-Wno-pedantic)
-
 build_lib(
   LIBNAME point-to-point
   SOURCE_FILES
@@ -29,11 +27,14 @@ build_lib(
     model/pause-header.cc
     model/pint.cc
     model/qbb-header.cc
-    model/switch-mmu.cc
     model/rdma-queue-pair.cc
     model/qbb-channel.cc
     model/qbb-net-device.cc
     model/qbb-remote-channel.cc
+    model/rdma-hw.cc
+    model/rdma-driver.cc
+    model/switch-node.cc
+    model/switch-mmu.cc
   HEADER_FILES
     ${mpi_headers}
     helper/point-to-point-helper.h
@@ -49,7 +50,12 @@ build_lib(
     model/qbb-channel.h
     model/qbb-net-device.h
     model/qbb-remote-channel.h
+    model/rdma-hw.h
+    model/rdma-driver.h
+    model/switch-node.h
+    model/switch-mmu.h
   LIBRARIES_TO_LINK ${libnetwork}
+                    ${libinternet}
                     ${mpi_libraries}
   TEST_SOURCES test/point-to-point-test.cc
 )
