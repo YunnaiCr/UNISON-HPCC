@@ -26,6 +26,7 @@ build_lib(
     model/udp-server.cc
     model/udp-trace-client.cc
     model/rdma-client.cc
+    helper/rdma-client-helper.cc
   HEADER_FILES
     helper/bulk-send-helper.h
     helper/on-off-helper.h
@@ -52,6 +53,7 @@ build_lib(
     model/udp-server.h
     model/udp-trace-client.h
     model/rdma-client.h
+    helper/rdma-client-helper.h
   LIBRARIES_TO_LINK ${libinternet}
                     ${libpoint-to-point}
   TEST_SOURCES

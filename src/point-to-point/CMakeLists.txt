@@ -22,6 +22,7 @@ build_lib(
     helper/point-to-point-helper.cc
     model/point-to-point-channel.cc
     model/point-to-point-net-device.cc
+    model/point-to-point-remote-channel.cc
     model/ppp-header.cc
     model/cn-header.cc
     model/pause-header.cc
@@ -31,6 +32,7 @@ build_lib(
     model/qbb-channel.cc
     model/qbb-net-device.cc
     model/qbb-remote-channel.cc
+    helper/qbb-helper.cc
     model/rdma-hw.cc
     model/rdma-driver.cc
     model/switch-node.cc
@@ -40,6 +42,7 @@ build_lib(
     helper/point-to-point-helper.h
     model/point-to-point-channel.h
     model/point-to-point-net-device.h
+    model/point-to-point-remote-channel.h
     model/ppp-header.h
     model/cn-header.h
     model/pause-header.h
@@ -50,10 +53,13 @@ build_lib(
     model/qbb-channel.h
     model/qbb-net-device.h
     model/qbb-remote-channel.h
+    helper/qbb-helper.h
     model/rdma-hw.h
     model/rdma-driver.h
     model/switch-node.h
     model/switch-mmu.h
+    model/trace-format.h
+    helper/sim-setting.h
   LIBRARIES_TO_LINK ${libnetwork}
                     ${libinternet}
                     ${mpi_libraries}
