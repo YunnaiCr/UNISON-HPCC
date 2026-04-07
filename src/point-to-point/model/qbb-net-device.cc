@@ -28,6 +28,7 @@
 #include "ns3/double.h"
 #include "ns3/data-rate.h"
 #include "ns3/object-vector.h"
+#include "ns3/queue-size.h"
 #include "ns3/pause-header.h"
 #include "ns3/drop-tail-queue.h"
 #include "ns3/assert.h"
@@ -73,7 +74,7 @@ namespace ns3 {
 		m_rrlast = 0;
 		m_qlast = 0;
 		m_ackQ = CreateObject<DropTailQueue<Packet> >();
-		m_ackQ->SetAttribute("MaxBytes", UintegerValue(0xffffffff)); // queue limit is on a higher level, not here
+		m_ackQ->SetAttribute("MaxSize", QueueSizeValue(QueueSize("4294967295B"))); // queue limit is on a higher level, not here
 	}
 
 	Ptr<Packet> RdmaEgressQueue::DequeueQindex(int qIndex){

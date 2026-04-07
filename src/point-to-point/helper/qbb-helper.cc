@@ -29,6 +29,7 @@
 #include "ns3/qbb-channel.h"
 #include "ns3/qbb-remote-channel.h"
 #include "ns3/queue.h"
+#include "ns3/drop-tail-queue.h"
 #include "ns3/config.h"
 #include "ns3/packet.h"
 #include "ns3/names.h"
@@ -49,7 +50,7 @@ namespace ns3 {
 
 QbbHelper::QbbHelper ()
 {
-  m_queueFactory.SetTypeId ("ns3::DropTailQueue");
+  m_queueFactory.SetTypeId (DropTailQueue<Packet>::GetTypeId());
   m_deviceFactory.SetTypeId ("ns3::QbbNetDevice");
   m_channelFactory.SetTypeId ("ns3::QbbChannel");
   m_remoteChannelFactory.SetTypeId ("ns3::QbbRemoteChannel");
