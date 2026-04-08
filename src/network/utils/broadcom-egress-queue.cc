@@ -6,6 +6,7 @@
 #include "ns3/double.h"
 #include "ns3/simulator.h"
 #include "ns3/drop-tail-queue.h"
+#include "ns3/queue-size.h"
 #include "broadcom-egress-queue.h"
 
 NS_LOG_COMPONENT_DEFINE("BEgressQueue");
@@ -47,7 +48,10 @@ namespace ns3 {
 		for (uint32_t i = 0; i < fCnt; i++)
 		{
 			m_bytesInQueue[i] = 0;
-			m_queues.push_back(CreateObject<DropTailQueue<Packet> >());
+			Ptr<DropTailQueue<Packet>> queue = CreateObject<DropTailQueue<Packet>>();
+			// HPCC expects the outer BEgressQueue byte limit to be the effective bound.
+			queue->SetAttribute("MaxSize", QueueSizeValue(QueueSize("4294967295B")));
+			m_queues.push_back(queue);
 		}
 	}
 
@@ -114,9 +118,12 @@ namespace ns3 {
 	{
 		NS_LOG_FUNCTION(this << p);
 
-		if (m_bytesInQueueTotal + p->GetSize() < m_maxBytes)  // infinite queue
+		if (m_bytesInQueueTotal + p->GetSize() < m_maxBytes)
 		{
-			m_queues[qIndex]->Enqueue(p);
+			if (!m_queues[qIndex]->Enqueue(p))
+			{
+				return false;
+			}
 			m_bytesInQueueTotal += p->GetSize();
 			m_bytesInQueue[qIndex] += p->GetSize();
 		}

@@ -91,7 +91,11 @@ uint32_t
 SeqTsHeader::GetSerializedSize() const
 {
     NS_LOG_FUNCTION(this);
-    return 4 + 8;
+    if (IntHeader::mode == IntHeader::NONE)
+    {
+        return 4 + 8;
+    }
+    return sizeof(m_seq) + sizeof(m_pg) + IntHeader::GetStaticSize();
 }
 
 void
@@ -100,8 +104,12 @@ SeqTsHeader::Serialize(Buffer::Iterator start) const
     NS_LOG_FUNCTION(this << &start);
     Buffer::Iterator i = start;
     i.WriteHtonU32(m_seq);
-    i.WriteHtonU64(m_ts);
-
+    if (IntHeader::mode == IntHeader::NONE)
+    {
+        i.WriteHtonU64(m_ts);
+        return;
+    }
+    i.WriteHtonU16(m_pg);
     ih.Serialize(i);
 }
 
@@ -111,7 +119,12 @@ SeqTsHeader::Deserialize(Buffer::Iterator start)
     NS_LOG_FUNCTION(this << &start);
     Buffer::Iterator i = start;
     m_seq = i.ReadNtohU32();
-    m_ts = i.ReadNtohU64();
+    if (IntHeader::mode == IntHeader::NONE)
+    {
+        m_ts = i.ReadNtohU64();
+        return GetSerializedSize();
+    }
+    m_pg = i.ReadNtohU16();
     ih.Deserialize(i);
     return GetSerializedSize();
 }
